@@ -3,43 +3,54 @@ import { useEffect, useState } from "react";
 import { exerciseOptions, fetchData } from "../utils/fetchData.js";
 import { EXERCISES_URL } from "../utils/constants.js";
 import HorizontalScrollbar from "./HorizontalScrollbar.jsx";
+import BodyPart from "./BodyPart.jsx";
 
-export const SearchExercises = () => {
+export const SearchExercises = ({
+  setExercises,
+  bodyPart,
+  setBodyPart,
+  page,
+}) => {
   const [search, setSearch] = useState("");
-  const [exercises, setExercises] = useState([]);
   const [bodyParts, setBodyParts] = useState([]);
 
   useEffect(() => {
     fetchExercisesData();
   }, []);
 
+  useEffect(() => {
+    handleSearch();
+  }, [page]);
+
   const fetchExercisesData = async () => {
-    const bodyPartsData = await fetchData(
-      `${EXERCISES_URL}/exercises/bodyPartList`,
-      exerciseOptions,
-    );
-
-    setBodyParts(["all", ...bodyPartsData]);
-  };
-
-  const handleSearch = async () => {
-    if (search) {
-      const exercisesData = await fetchData(
-        `${EXERCISES_URL}/exercises`,
+    try {
+      const bodyPartsData = await fetchData(
+        `${EXERCISES_URL}/bodyPartList`,
         exerciseOptions,
       );
 
-      const searchedExercises = exercisesData.filter(
-        (exercise) =>
-          exercise.name.toLowerCase().includes(search) ||
-          exercise.target.toLowerCase().includes(search) ||
-          exercise.equipment.toLowerCase().includes(search) ||
-          exercise.bodyPart.toLowerCase().includes(search),
-      );
+      setBodyParts(["all", ...bodyPartsData]);
+    } catch (e) {
+      console.error(`Error searching body part list: ${e}`);
+    }
+  };
 
-      console.log(exercisesData);
-      setSearch("");
-      setExercises(searchedExercises);
+  const handleSearch = async () => {
+    try {
+      if (search) {
+        const exercisesData = await fetchData(
+          `${EXERCISES_URL}/name/${search}?offset=${page}&limit=12`,
+          exerciseOptions,
+        );
+
+        setTimeout(() => {
+          window.scrollTo({ top: 1800, behavior: "smooth" });
+        }, 200);
+
+        setExercises(exercisesData);
+      }
+    } catch (e) {
+      console.error(`Error searching exercises ${e}`);
     }
   };
 
@@ -72,7 +83,7 @@ export const SearchExercises = () => {
         />
         <Button
           className={"search-btn"}
-          onClick={handleSearch}
+          onClick={() => handleSearch()}
           sx={{
             backgroundColor: "#FF2625",
             color: "#FFF",
@@ -88,7 +99,28 @@ export const SearchExercises = () => {
         </Button>
       </Box>
       <Box sx={{ position: "relative", width: "100%", p: "20px" }}>
-        <HorizontalScrollbar data={bodyParts} />
+        <HorizontalScrollbar
+          data={bodyParts}
+          bodyPart={bodyPart}
+          setBodyPart={setBodyPart}
+        >
+          {bodyParts.map((item) => {
+            return (
+              <Box
+                key={item.id || item}
+                itemId={item.id || item}
+                title={item.id || item}
+                m="0 40px"
+              >
+                <BodyPart
+                  item={item}
+                  bodyPart={bodyPart}
+                  setBodyPart={setBodyPart}
+                />
+              </Box>
+            );
+          })}
+        </HorizontalScrollbar>
       </Box>
     </Stack>
   );

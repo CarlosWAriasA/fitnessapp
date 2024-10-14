@@ -1,7 +1,7 @@
 import Icon from "../assets/icons/gym.png";
 import { Stack, Typography } from "@mui/material";
 
-const BodyPart = ({ item, setBodyPart, bodyPart }) => {
+const BodyPart = ({ item, setBodyPart, bodyPart, setSearchType }) => {
   return (
     <Stack
       type={"button"}
@@ -19,6 +19,7 @@ const BodyPart = ({ item, setBodyPart, bodyPart }) => {
       }}
       onClick={() => {
         setBodyPart(item);
+        setSearchType("bodyPart");
         window.scrollTo({ top: 1800, left: 100, behavior: "smooth" });
       }}
     >

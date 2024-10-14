@@ -6,11 +6,18 @@ import { useEffect } from "react";
 import { exerciseOptions, fetchData } from "../utils/fetchData.js";
 import { EXERCISES_URL } from "../utils/constants.js";
 
-const Exercises = ({ setExercises, bodyPart, exercises, setPage, page }) => {
-  console.log(exercises, bodyPart);
-
+const Exercises = ({
+  setExercises,
+  bodyPart,
+  exercises,
+  setPage,
+  page,
+  searchType,
+  setSearchType,
+}) => {
   useEffect(() => {
     const fetchExercises = async () => {
+      setSearchType("bodyPart");
       let exercises = [];
       if (bodyPart !== "all") {
         exercises = await fetchData(
@@ -25,8 +32,9 @@ const Exercises = ({ setExercises, bodyPart, exercises, setPage, page }) => {
       }
       setExercises(exercises);
     };
-
-    fetchExercises();
+    if (searchType === "bodyPart") {
+      fetchExercises();
+    }
   }, [bodyPart, page]);
 
   return (

@@ -8,6 +8,7 @@ function Home() {
   const [exercises, setExercises] = useState([]);
   const [bodyPart, setBodyPart] = useState("all");
   const [page, setPage] = useState(0);
+  const [searchType, setSearchType] = useState("bodyPart");
 
   return (
     <Box>
@@ -18,6 +19,8 @@ function Home() {
         setBodyPart={setBodyPart}
         page={page}
         setPage={setPage}
+        setSearchType={setSearchType}
+        searchType={searchType}
       />
       <Exercises
         exercises={exercises}
@@ -25,6 +28,8 @@ function Home() {
         bodyPart={bodyPart}
         page={page}
         setPage={setPage}
+        setSearchType={setSearchType}
+        searchType={searchType}
       />
     </Box>
   );

@@ -10,6 +10,8 @@ export const SearchExercises = ({
   bodyPart,
   setBodyPart,
   page,
+  setSearchType,
+  searchType,
 }) => {
   const [search, setSearch] = useState("");
   const [bodyParts, setBodyParts] = useState([]);
@@ -19,7 +21,7 @@ export const SearchExercises = ({
   }, []);
 
   useEffect(() => {
-    handleSearch();
+    handleSearch(searchType);
   }, [page]);
 
   const fetchExercisesData = async () => {
@@ -35,9 +37,10 @@ export const SearchExercises = ({
     }
   };
 
-  const handleSearch = async () => {
+  const handleSearch = async (type = searchType) => {
     try {
-      if (search) {
+      if (search && type === "search") {
+        setSearchType("search");
         const exercisesData = await fetchData(
           `${EXERCISES_URL}/name/${search}?offset=${page}&limit=12`,
           exerciseOptions,
@@ -83,7 +86,10 @@ export const SearchExercises = ({
         />
         <Button
           className={"search-btn"}
-          onClick={() => handleSearch()}
+          onClick={() => {
+            setSearchType("search");
+            handleSearch("search");
+          }}
           sx={{
             backgroundColor: "#FF2625",
             color: "#FFF",
@@ -99,11 +105,7 @@ export const SearchExercises = ({
         </Button>
       </Box>
       <Box sx={{ position: "relative", width: "100%", p: "20px" }}>
-        <HorizontalScrollbar
-          data={bodyParts}
-          bodyPart={bodyPart}
-          setBodyPart={setBodyPart}
-        >
+        <HorizontalScrollbar>
           {bodyParts.map((item) => {
             return (
               <Box
@@ -116,6 +118,7 @@ export const SearchExercises = ({
                   item={item}
                   bodyPart={bodyPart}
                   setBodyPart={setBodyPart}
+                  setSearchType={setSearchType}
                 />
               </Box>
             );
